@@ -361,6 +361,33 @@ sup{font-size:.6em;line-height:0}
 .dok{display:block;margin:24px 6px 0 auto;border:0;background:none;color:var(--ac);font-size:17px;padding:8px 10px}
 .ex2{display:flex;gap:18px;align-items:baseline;white-space:nowrap;font-size:19px;color:var(--mut);padding:2px 4px}.ex2 b{font-weight:400}.ex2 span{color:var(--tx2)}
 .opq .lb small{font-weight:400;font-size:17px;color:var(--mut);margin-left:auto}
+
+.pgc{display:flex;align-items:center;justify-content:center;position:relative;padding:13px 0;font-size:18px;font-weight:500;color:var(--tx2)}
+.pgc button{position:absolute;left:8px;border:0;background:none;color:var(--tx2);padding:6px;display:flex}
+.pgc svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.sg{padding-bottom:calc(30px + env(safe-area-inset-bottom,0px))}
+.sgt{padding:14px 18px 4px;font-weight:600;font-size:15px;color:var(--tx2)}
+.sgr{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 18px;min-height:42px;font-size:15.5px;color:var(--tx2);cursor:pointer}
+.sgr.d{min-height:56px;padding:11px 18px;border-top:1px solid var(--ln)}
+.sgr.d.f{border-top:0}
+.sgr small{display:block;font-size:12.5px;color:var(--mut);margin-top:4px;line-height:1.35;max-width:270px}
+.sgr .tg{width:42px;height:24px;border-radius:12px;flex:none}.sgr .tg:after{width:22px;height:22px}.sgr .tg.on:after{left:19px}
+.sgb{border-top:1px solid var(--ln);margin-top:8px}
+.rd2{width:16px;height:16px;border-radius:50%;background:#e3e3e8;flex:none;box-sizing:border-box}
+.rd2.on{background:radial-gradient(var(--ac) 0 36%,transparent 40%);border:2px solid var(--ac)}
+.sgl{display:flex;align-items:center;gap:12px}.sgl svg{width:26px;height:26px}
+.cah{background:var(--hd);padding-bottom:16px}
+.cas{margin:2px 12px 0;background:var(--bg);border-radius:4px;height:46px;display:flex;align-items:center;gap:12px;padding:0 14px;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.cas svg{width:20px;height:20px;stroke:var(--mut);fill:none;stroke-width:2;stroke-linecap:round}
+.cas input{flex:1;min-width:0;border:0;outline:0;background:none;font:inherit;font-size:15.5px;color:var(--tx2)}
+.cas input::placeholder{color:var(--mut)}
+.cal{background:var(--bg);border-radius:16px 16px 0 0;margin-top:-10px;padding-top:6px;min-height:60vh}
+.cai{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--ln)}
+.cai .ic{width:40px;height:40px;flex:none;display:flex;align-items:center;justify-content:center}.cai .ic svg{width:34px;height:34px}
+.cai div{min-width:0}.cai b{display:block;font-weight:500;font-size:16px;color:var(--tx2)}.cai span{display:block;font-size:13px;color:var(--mut);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lgc{background:var(--bg);border-radius:4px;width:100%;max-width:340px;padding:24px 22px 14px;font-size:16px;color:var(--tx2);box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.lgb{display:flex;justify-content:flex-end;gap:26px;margin-top:34px}.lgb button{border:0;background:none;color:var(--ac);font-size:15px;font-weight:500;padding:6px 4px}
+html.acx *{transition:none!important;animation:none!important}
 </style>
 
 </head>
@@ -374,6 +401,7 @@ sup{font-size:.6em;line-height:0}
 <div class="afp" id="pg"></div>
 <div class="sheet" id="acs" onclick="if(event.target.id=='acs')closeAc()"><div class="box acb" id="acb"></div></div>
 <div class="ocp" id="ocp"></div>
+<div class="dlg" id="lgd" onclick="if(event.target.id=='lgd')closeLg()"><div class="lgc"><div>Do you want to logout?</div><div class="lgb"><button onclick="closeLg()">Cancel</button><button onclick="closeLg()">OK</button></div></div></div>
 <div class="dlg" id="dlg" onclick="if(event.target.id=='dlg')closeDlg()"><div class="dcard"><div class="dtt">Error</div><div class="dmsg" id="dmsg"></div><button class="dok" onclick="closeDlg()">OK</button></div></div>
 <div class="sheet" id="qs"><div class="box qbox" id="qbx"></div></div>
 <div class="sheet" id="dt"><div class="box dbox" id="dbx"></div></div>
@@ -496,9 +524,9 @@ h='<div class="sec">Account</div>'
 +row("Mandates",'<path d="M4 7a2 2 0 012-2h12a2 2 0 012 2v5M4 7v11a2 2 0 002 2h5M4 10h16M8 3v4M16 3v4"/><circle cx="17" cy="17" r="4"/><path d="M17 15v2l1.3 1"/>',"openMandates()")
 +row("App Code",'<path d="M5 11h14v10H5zM8 11V7a4 4 0 017.6-1.6"/>',"openAc()")
 +row("Profile",'<circle cx="12" cy="8" r="3.6"/><path d="M5.5 20.5c0-3.6 3-5.6 6.5-5.6s6.5 2 6.5 5.6"/>',"openProfile()")
-+row("Settings",'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" transform="translate(.6 .6) scale(.95)"/>',"nf()")
-+row("Connected apps",'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5"/>',"nf()")
-+row("Logout",'<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>',"nf()")
++row("Settings",'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" transform="translate(.6 .6) scale(.95)"/>',"openSettings()")
++row("Connected apps",'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5"/>',"openConnected()")
++row("Logout",'<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>',"openLogout()")
 +'<div class="sec cs">Console<i class="dn2"></i></div><div class="lk">'+lk.slice(0,4).map(function(x){return'<span onclick="'+x[1]+'">'+x[0]+'</span>'}).join("")+'</div><div class="lk l2">'+lk.slice(4).map(function(x){return'<span onclick="'+x[1]+'">'+x[0]+'</span>'}).join("")+'</div>'
 +'<div class="sec" style="padding-top:34px">Support</div>'
 +row("Support portal",'<path d="M12 21a9 9 0 100-18 9 9 0 000 18zM12 16a4 4 0 100-8 4 4 0 000 8zM6 6l3 3M18 6l-3 3M6 18l3-3M18 18l-3-3"/>',"nf()")
@@ -680,7 +708,7 @@ function isOpen(){var t=ist();return tradeDay(Date.now())&&t.m>=555&&t.m<930}
 function nextOpen(){var t=ist(),add=(tradeDay(Date.now())&&t.m<555)?0:1;while(!tradeDay(Date.now()+add*86400000))add++;var w=new Date(Date.now()+add*86400000+19800000).getUTCDay();return(add==0?"today":add==1?"tomorrow":DN[w])+" 9:15 AM"}
 function msHTML(){return'<div class="ng"><span></span><span onclick="toast(\'Practice mode mein ek hi watchlist hai\')">+ New group</span></div>'}
 function rkey(){var d=new Date(Date.now()+19800000-8*3600000);return d.getUTCFullYear()+"-"+d.getUTCMonth()+"-"+d.getUTCDate()}
-function rollover(){var k=rkey();if(S.day==k)return false;S.day=k;S.ls=S.ls||{};for(var pk in S.pos){if(S.pos[pk].qty==0)delete S.pos[pk];else S.pos[pk].r=0}
+function rollover(){var k=rkey();if(S.day==k)return false;S.day=k;S.hist=[];S.ls=S.ls||{};for(var pk in S.pos){if(S.pos[pk].qty==0)delete S.pos[pk];else S.pos[pk].r=0}
 ALLS().forEach(function(y){var a=S.cd[y]||[];if(a.length){S.dy[y].push([a[0][1],Math.max.apply(null,a.map(function(c){return c[2]})),Math.min.apply(null,a.map(function(c){return c[3]})),a[a.length-1][4]]);if(S.dy[y].length>260)S.dy[y].shift();S.ls[y]=a;S.cd[y]=[]}
 var p=price(y);if(isIx(y))S.ix[y].c=p;else S.cl[y]=p});return true}
 function sess(y){var a=S.cd[y]||[];return a.length?a:((S.ls&&S.ls[y])||a)}
@@ -751,6 +779,39 @@ S.live={url:u.replace(/\/+$/,""),on:true,seeded:false};liveErr="";save();toast("
 liveFetch(true).then(function(){if(liveErr){S.live.on=false;save();toast("Live prices nahi mile: "+liveErr)}else toast("Live prices chalu ho gaye");renderAll()})}
 function migr(){if(S.pv||Object.keys(S.pos).length||S.pend.length||S.hist.length)return;var RP={RELIANCE:1351,HDFCBANK:817.8,BHARTIARTL:2128.5,ICICIBANK:1585.5,SBIN:1132.65};for(var k in RP){S.px[k]=RP[k];S.cl[k]=RP[k];delete S.cd[k];delete S.dy[k];if(S.ls)delete S.ls[k]}S.pv=1}
 migr();ensure();rollover();save();
+/* ===== Settings / Connected apps / Logout ===== */
+var STD={on:0,sow:0,acc:0,fs:0,sp:1,wn:1,wc:0,fo:1,ql:1};
+function stG(k){return (S.st&&S.st[k]!=null)?S.st[k]:STD[k]}
+function applyTheme(){var r=document.documentElement;if(S.theme=="dark")r.setAttribute("data-theme","dark");else r.removeAttribute("data-theme");r.classList.toggle("acx",!!stG("acc"))}
+function stT(k,el){S.st=S.st||{};S.st[k]=stG(k)?0:1;el.classList.toggle("on");save();applyTheme();
+if(k=="fs"){try{if(S.st.fs)document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();else if(document.fullscreenElement)document.exitFullscreen()}catch(e){}}}
+function stTh(v){S.theme=v;save();applyTheme();stDraw()}
+function stCh(v){S.chart=v;save();stDraw()}
+var IQ_I='<svg viewBox="0 0 26 26"><path d="M2 22l5-3 4 2 5-5" fill="none" stroke="#1fb36b" stroke-width="1.6"/><text x="5" y="14" font-family="Inter,Arial" font-weight="800" font-size="13" fill="#2b2b3a">IQ</text></svg>';
+var TV_I='<svg viewBox="0 0 26 26"><rect width="26" height="26" rx="3" fill="#131722"/><text x="13" y="18" text-anchor="middle" font-family="Inter,Arial" font-weight="800" font-size="13" fill="#fff">TV</text></svg>';
+function stDraw(){var tg=function(k,t,d,f){var on=stG(k);return'<div class="sgr d'+(f?' f':'')+'" onclick="stT(\''+k+'\',this.querySelector(\'.tg\'))"><div>'+t+(d?'<small>'+d+'</small>':'')+'</div><button class="tg'+(on?' on':'')+'" aria-label="'+t+'"></button></div>'};
+var th=S.theme=="dark",ch=S.chart||"tv";if(!document.getElementById("stb"))return;
+document.getElementById("stb").innerHTML='<div class="sgt">Theme</div>'
++'<div class="sgr" onclick="stTh(\'\')"><span>Default</span><i class="rd2'+(th?'':' on')+'"></i></div>'
++'<div class="sgr" onclick="stTh(\'dark\')"><span>Dark</span><i class="rd2'+(th?' on':'')+'"></i></div>'
++'<div class="sgb"></div>'
++tg("on","Order notifications","",1)+tg("sow","Sticky order window","Don\'t automatically hide order window after order placement.")
++tg("acc","Accessibility mode","Disables transitions and simplifies UI.")+tg("fs","Fullscreen","May not work on certain devices.")
++tg("sp","Sticky pins","Show pinned stock tickers on the top on all screens.")+tg("wn","Show watchlist notes","")+tg("wc","Disable watchlist colors","")+tg("fo","Remember F&amp;O order quantity","")
++'<div class="sgb"></div><div class="sgt">Chart</div>'
++'<div class="sgr" onclick="stCh(\'iq\')"><span class="sgl">'+IQ_I+'ChartIQ</span><i class="rd2'+(ch=="iq"?' on':'')+'"></i></div>'
++'<div class="sgr" onclick="stCh(\'tv\')"><span class="sgl">'+TV_I+'TradingView</span><i class="rd2'+(ch=="tv"?' on':'')+'"></i></div>'
++tg("ql","Enable quick launcher","Quickly switch to the last opened chart.",1)}
+function openSettings(){pgShow('<div class="afw"><div class="pgc"><button onclick="closePg()" aria-label="Back">'+BK+'</button>Settings</div><div class="sg" id="stb"></div></div>');stDraw()}
+var CAP=[["Support Portal","Zerodha support portal",'<svg viewBox="0 0 34 34"><path d="M3 5l22 0q6 0 6 6v18L3 29z" fill="#3b7ddd"/><path d="M3 5l16 0-16 24z" fill="#2f6fcf"/><path d="M15 29L31 12v17z" fill="#4a8ae6"/></svg>'],
+["Tijori-Android","Android app for Tijori",'<svg viewBox="0 0 34 34"><text x="17" y="19" text-anchor="middle" font-family="Inter,Arial" font-weight="700" font-size="8" letter-spacing=".5" fill="#2b2b3a">TIJORI</text><rect x="6" y="23" width="22" height="2" fill="#f2bd00"/></svg>'],
+["smallcase Gateway","smallcases are baskets of stocks &amp; ETFs that help",'<svg viewBox="0 0 34 34" fill="none" stroke="#1d7de6" stroke-width="2.6" stroke-linejoin="round"><path d="M17 4l11 6v12l-11 7-11-7V10z"/><path d="M17 16l11-6M17 16v13M17 16L6 10" stroke-width="2"/></svg>']];
+function caF(v){v=(v||"").trim().toLowerCase();document.getElementById("cal").innerHTML=CAP.filter(function(a){return a[0].toLowerCase().indexOf(v)>-1}).map(function(a){return'<div class="cai"><i class="ic">'+a[2]+'</i><div><b>'+a[0]+'</b><span>'+a[1]+'</span></div></div>'}).join("")}
+function openConnected(){pgShow('<div class="afw"><div class="cah"><div class="pgc"><button onclick="closePg()" aria-label="Back">'+BK+'</button>Connected apps</div><div class="cas"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg><input placeholder="Search apps" oninput="caF(this.value)"></div></div><div class="cal" id="cal"></div></div>');caF("")}
+function openLogout(){document.getElementById("lgd").classList.add("show")}
+function closeLg(){document.getElementById("lgd").classList.remove("show")}
+applyTheme();
+
 
 /* ===== Options: expiries, model pricing, contracts ===== */
 var OU={"NIFTY 50":{n:"NIFTY",step:50,lot:65,wk:true,vm:1},"NIFTY BANK":{n:"BANKNIFTY",step:100,lot:30,wk:false,vm:1.12}};
