@@ -322,6 +322,12 @@ sup{font-size:.6em;line-height:0}
 .opq .lb small{font-weight:400;font-size:12.5px;color:var(--mut);margin-left:4px}
 .oph .opt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .w .s{white-space:nowrap}
+.dlg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:40;padding:0 18px}.dlg.show{display:flex}
+.dcard{background:var(--bg);border-left:10px solid #e0514d;border-radius:6px;width:100%;max-width:400px;padding:24px 24px 16px 22px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.dtt{font-size:26px;font-weight:600;color:var(--tx2)}.dmsg{margin-top:22px;font-size:17px;line-height:1.55;color:var(--tx2)}.dmsg .lk2{color:var(--ac)}
+.dok{display:block;margin:24px 6px 0 auto;border:0;background:none;color:var(--ac);font-size:17px;padding:8px 10px}
+.ex2{display:flex;gap:18px;align-items:baseline;white-space:nowrap;font-size:19px;color:var(--mut);padding:2px 4px}.ex2 b{font-weight:400}.ex2 span{color:var(--tx2)}
+.opq .lb small{font-weight:400;font-size:17px;color:var(--mut);margin-left:auto}
 </style>
 
 </head>
@@ -333,6 +339,7 @@ sup{font-size:.6em;line-height:0}
 <div class="opg" id="op"></div>
 <div class="afp" id="af"></div>
 <div class="ocp" id="ocp"></div>
+<div class="dlg" id="dlg" onclick="if(event.target.id=='dlg')closeDlg()"><div class="dcard"><div class="dtt">Error</div><div class="dmsg" id="dmsg"></div><button class="dok" onclick="closeDlg()">OK</button></div></div>
 <div class="sheet" id="qs"><div class="box qbox" id="qbx"></div></div>
 <div class="sheet" id="dt"><div class="box dbox" id="dbx"></div></div>
 <div id="toast"></div>
@@ -364,7 +371,7 @@ var cls=function(n){return n>=0?"up":"dn"};
 var isIx=function(s){return IXN.indexOf(s)>-1};
 var price=function(s){return isIx(s)?S.ix[s].p:S.px[s]};
 var close=function(s){return isIx(s)?S.ix[s].c:S.cl[s]};
-function toast(t){var e=document.getElementById("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},2200)}
+function toast(t){if(/practice/i.test(t))return;var e=document.getElementById("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},2200)}
 function nf(){toast("Ye feature practice app mein nahi hai")}
 function base(){return 1000000+S.payin-S.payout}
 function equity(){var v=S.cash;for(var k in S.pos)v+=S.pos[k].qty*S.px[S.pos[k].sym];return v}
@@ -528,7 +535,7 @@ var er=apply(o,l,false);toast(er?"Order rejected: "+dname(o.sym):"Order executed
 var RF='<svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 108-8M4 4v5h5"/></svg>';
 function typ(){ord.type=ord.tg?(ord.pm=="LMT"?"SL":"SLM"):ord.pm}
 function trigDef(){var l=S.px[ord.sym];return Math.round(l*(ord.side=="B"?1.005:.995)*20)/20}
-function openOrd(sym,side){var m=S.oc&&S.oc[sym];if(m&&expMs(m.e)<=Date.now())return toast("Ye contract expire ho chuka hai");ord={sym:sym,side:side,prod:m?"NRML":"MIS",type:"MKT",pm:"MKT",tg:false,more:false,qty:m?m.lot:1,price:S.px[sym],trig:0,vr:isOpen()?"reg":"amo",err:"",lot:m?m.lot:1,ul:!!m,opt:!!m};drawOrd();document.getElementById("op").classList.add("show")}
+function openOrd(sym,side){var m=S.oc&&S.oc[sym];if(m&&expMs(m.e)<=Date.now())return toast("Ye contract expire ho chuka hai");ord={sym:sym,side:side,prod:"MIS",type:"MKT",pm:"MKT",tg:false,more:false,qty:m?m.lot:1,price:S.px[sym],trig:0,vr:isOpen()?"reg":"amo",err:"",lot:m?m.lot:1,ul:false,opt:!!m};drawOrd();document.getElementById("op").classList.add("show")}
 function pick(k,v){readOrd();ord[k]=v;ord.err="";if(k=="side"&&ord.tg)ord.trig=trigDef();drawOrd();if(k=="side")toast("Switched to "+(v=="B"?"BUY":"SELL"))}
 function togPm(){readOrd();ord.pm=ord.pm=="MKT"?"LMT":"MKT";if(ord.pm=="LMT")ord.price=S.px[ord.sym];typ();ord.err="";drawOrd()}
 function togTg(){readOrd();ord.tg=!ord.tg;if(ord.tg){ord.trig=trigDef();ord.more=true}typ();ord.err="";drawOrd()}
@@ -539,12 +546,12 @@ function drawOrd(){var o=ord,l=S.px[o.sym],mk=o.pm=="MKT",B=o.side=="B",R="\u20B
 var SWAP='<svg viewBox="0 0 24 24"><path d="M4 8h16M16 4l4 4-4 4M20 16H4M8 12l-4 4 4 4"/></svg>';
 var SHD='<svg viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5V6z"/><path d="M9 15v-5l3 3 3-3v5"/></svg>';
 var rd=function(v,t){return'<label class="rd"><input type="radio" name="prod" '+(o.prod==v?"checked":"")+' onchange="pick(\'prod\',\''+v+'\')">'+t+'</label>'};
-var tabs=[["reg","Regular"],["mtf","MTF"],["ice","Iceberg"],["cov","Cover"]].map(function(v){return'<button class="'+(v[0]=="reg"?"on":"")+'" onclick="pickVr(\''+v[0]+'\')">'+v[1]+'</button>'}).join("");
-var h='<div class="opw"><div class="oph"><button onclick="closeOrd()" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span class="opt"'+(o.opt?' style="font-size:17px"':"")+'>'+esc(dname(o.sym))+'</span><button onclick="pick(\'side\',\''+(B?"S":"B")+'\')" aria-label="Switch buy or sell"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button></div>'
-+'<div class="opx"><span class="ex"><i class="rb on"></i>'+(o.opt?"NFO":"NSE")+' <b id="ons">'+R+f2(l)+'</b></span>'+(o.opt?"":'<span class="ex" onclick="toast(\'Practice mode mein sirf NSE hai\')"><i class="rb"></i>BSE <b>'+R+f2(l)+'</b></span>')+'</div>'
+var tabs=[["reg","Regular"],["mtf","MTF"],["ice","Iceberg"],["cov","Cover"]].filter(function(v){return !o.opt||v[0]=="reg"||v[0]=="ice"}).map(function(v){return'<button class="'+(v[0]=="reg"?"on":"")+'" onclick="pickVr(\''+v[0]+'\')">'+v[1]+'</button>'}).join("");
+var h='<div class="opw"><div class="oph"><button onclick="closeOrd()" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span class="opt"'+(o.opt?' style="font-size:19px"':"")+'>'+(o.opt?dnameH(o.sym):esc(o.sym))+'</span><button onclick="pick(\'side\',\''+(B?"S":"B")+'\')" aria-label="Switch buy or sell"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button></div>'
++(o.opt?'<div class="opx"><span class="ex2" id="ons2">'+ostrip(o.sym)+'</span></div>':'<div class="opx"><span class="ex"><i class="rb on"></i>NSE <b id="ons">'+R+f2(l)+'</b></span>'+('<span class="ex" onclick="toast(\'Practice mode mein sirf NSE hai\')"><i class="rb"></i>BSE <b>'+R+f2(l)+'</b></span>')+'</div>')
 +'<div class="tb">'+tabs+'</div>'
 +'<div class="opscroll"><div class="opmid"><div class="card opc">'
-+'<div class="opq"><div class="lb">Quantity'+(o.opt?'<small>'+(o.ul?"Lots \u00B7 1 lot = "+o.lot+" qty":"Qty \u00B7 lot size "+o.lot)+'</small>':"")+'</div><div class="ip"><input id="oq" type="number" inputmode="numeric" min="1" value="'+(o.ul?Math.round(o.qty/o.lot):o.qty)+'" oninput="updReq()"><button class="sx'+(o.opt?" on":"")+'" onclick="togUl()" aria-label="Switch lots or quantity">'+SWAP+'</button></div></div>'
++'<div class="opq"><div class="lb">Quantity'+(o.opt?'<small id="olots">'+lotTxt(o)+'</small>':"")+'</div><div class="ip"><input id="oq" type="number" inputmode="numeric" min="1" value="'+(o.ul?Math.round(o.qty/o.lot):o.qty)+'" oninput="updReq()"><button class="sx'+(o.opt?" on":"")+'" onclick="togUl()" aria-label="Switch lots or quantity">'+SWAP+'</button></div></div>'
 +'<div class="opq"><div class="lb">'+(mk?"Market "+SHD:"Price")+'</div><div class="ip'+(mk?" hat":"")+'"><input id="op_" type="number" inputmode="decimal" step="0.05" '+(mk?'disabled value="0.00"':'value="'+o.price+'"')+' oninput="updReq()"><button class="sx on" onclick="togPm()" aria-label="Switch market or limit">'+SWAP+'</button></div></div>'
 +'<div class="opp">'+(o.opt?rd("MIS","Intraday")+rd("NRML","Overnight"):rd("MIS","Intraday")+rd("CNC","Longterm"))+'</div></div>'
 +'<button class="opmore'+(o.more?" o":"")+'" onclick="togMore()">More<svg viewBox="0 0 24 24"><path d="M5 9l7 7 7-7"/></svg></button>'
@@ -561,12 +568,13 @@ k.onpointermove=function(e){if(!drag)return;dx=Math.max(0,Math.min(mx(),e.client
 var end=function(){if(!drag)return;drag=false;if(dx>=mx()*.85){k.style.transition="transform .1s";k.style.transform="translateX("+mx()+"px)";place();setTimeout(rs,350)}else rs()};
 k.onpointerup=end;k.onpointercancel=end;
 k.onkeydown=function(e){if(e.key=="Enter"||e.key==" "){e.preventDefault();place()}}}
-function updReq(){if(!ord)return;readOrd();var e=document.getElementById("omg");if(!e)return;var pr=(ord.pm=="LMT"&&ord.price>0)?ord.price:S.px[ord.sym],v=ord.qty*pr,mis=ord.prod=="MIS"&&!ord.opt,m=ord.opt?(ord.side=="B"?v:Math.max(v,.1*S.ix[S.oc[ord.sym].u].p*ord.qty)):v/(mis?LEV:1),ch=Math.min(20,v*.0004),R="\u20B9";
-e.innerHTML='<span>Margin <b>'+R+f2(m)+(mis?' ('+LEV+'x)':'')+'</b> <i>+</i> <b>'+R+f2(ch)+'</b></span><span>Avail. <b>'+R+f2(avail())+'</b></span><button onclick="updReq()" aria-label="Refresh margin">'+RF+'</button>'}
-function refreshOrd(){var e=document.getElementById("ons");if(e&&ord)e.textContent="\u20B9"+f2(S.px[ord.sym]);updReq()}
+function updReq(){if(!ord)return;readOrd();var ol=document.getElementById("olots");if(ol&&ord.opt)ol.textContent=lotTxt(ord);var e=document.getElementById("omg");if(!e)return;var pr=(ord.pm=="LMT"&&ord.price>0)?ord.price:S.px[ord.sym],v=ord.qty*pr,mis=ord.prod=="MIS"&&!ord.opt,m=ord.opt?(ord.side=="B"?v:Math.max(v,.1*S.ix[S.oc[ord.sym].u].p*ord.qty)):v/(mis?LEV:1),ch=Math.min(20,v*.0004),R="\u20B9";
+e.innerHTML='<span>Margin <b>'+R+(ord.opt?Math.round(m).toLocaleString("en-IN"):f2(m))+(mis?' ('+LEV+'x)':'')+'</b> <i>+</i> <b>'+R+f2(ch)+'</b></span><span>Avail. <b>'+R+f2(avail())+'</b></span><button onclick="updReq()" aria-label="Refresh margin">'+RF+'</button>'}
+function refreshOrd(){if(!ord)return;var e2=document.getElementById("ons2");if(e2)e2.innerHTML=ostrip(ord.sym);var e=document.getElementById("ons");if(e&&!e2)e.textContent="\u20B9"+f2(S.px[ord.sym]);updReq()}
 function place(){readOrd();var o=ord;if(!o)return;typ();var l=S.px[o.sym],B=o.side=="B",open=isOpen();
 if(o.qty<1)return showErr("Quantity kam se kam 1 honi chahiye");
 if(o.opt&&o.qty%o.lot)return showErr("Quantity lot size ("+o.lot+") ke multiple mein honi chahiye");
+if(o.opt&&!open&&(o.type=="MKT"||o.type=="SLM"))return showDlg("Error","Market orders are blocked for index options using after market orders(AMO). Try placing MARKET order with <span class=\"lk2\">market protection</span> enabled.");
 if((o.type=="LMT"||o.type=="SL")&&!(o.price>0))return showErr("Sahi price daalo");
 if(o.type=="SL"||o.type=="SLM"){if(!(o.trig>0))return showErr("Trigger price daalo");if(B&&o.trig<=l)return showErr("Buy ke liye trigger price LTP se upar hona chahiye");if(!B&&o.trig>=l)return showErr("Sell ke liye trigger price LTP se neeche hona chahiye")}
 showErr("");
@@ -722,6 +730,10 @@ function dname(s){var m=S.oc&&S.oc[s];if(!m)return s;var a=m.e.split("-");return
 function dnameH(s){var m=S.oc&&S.oc[s];if(!m)return esc(s);var a=m.e.split("-"),o=ordn(+a[2]);return m.n+" "+(m.w?z2(+a[2])+"<sup>"+o+"</sup><i class=\"wb\">W</i>":"")+" "+MN[+a[1]-1]+" "+m.k+" "+m.t}
 function exch(s){return isOpt(s)?"NFO":isIx(s)?"INDICES":"NSE"}
 function posMargin(p){var l=S.px[p.sym];if(isOpt(p.sym)){var a=Math.abs(p.qty);if(p.qty>0)return a*l;return Math.max(a*l,a*S.ix[S.oc[p.sym].u].p*.1)}return Math.abs(p.qty)*l/(p.prod=="MIS"?LEV:1)}
+function showDlg(t,m){document.querySelector("#dlg .dtt").textContent=t;document.getElementById("dmsg").innerHTML=m;document.getElementById("dlg").classList.add("show")}
+function closeDlg(){document.getElementById("dlg").classList.remove("show")}
+function ostrip(y){var l=S.px[y],c=S.cl[y],d=l-c,pc=c?d/c*100:0;return'NFO <b class="'+cls(d)+'">\u20B9 '+f2(l)+'</b><span>'+(d>0?"+":"")+f2(d)+'</span><span>'+(pc>0?"+":"")+f2(pc)+'%</span>'}
+function lotTxt(o){var n=Math.round(o.qty/o.lot*100)/100;return o.ul?o.qty+" qty":n+(n==1?" lot":" lots")}
 function togUl(){readOrd();if(!ord.opt)return nf();ord.ul=!ord.ul;ord.err="";drawOrd()}
 function qsChart(y){if(isOpt(y))return toast("Option contract ka chart practice app mein nahi hai");closeQs();showDetail(y)}
 /* ===== Option chain page ===== */
