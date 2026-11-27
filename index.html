@@ -1148,10 +1148,10 @@ window.addEventListener("resize",function(){if(cp)cpDraw()})})();
 
 
 /* ===== Options: expiries, model pricing, contracts ===== */
-var OU={"NIFTY 50":{n:"NIFTY",step:50,lot:65,wk:true,vm:1},"NIFTY BANK":{n:"BANKNIFTY",step:100,lot:30,wk:false,vm:1.12}};
+var OU={"NIFTY 50":{n:"NIFTY",step:50,lot:65,wk:true,vm:1},"NIFTY BANK":{n:"BANKNIFTY",step:100,lot:30,wk:false,vm:1.12},"SENSEX":{n:"SENSEX",step:100,lot:20,wk:true,vm:1,wd:4}};
 function stepFor(p){var L=[1,2.5,5,10,20,25,50,100,200],i=0;while(i<L.length-1&&L[i]<p*.006)i++;return L[i]}
 STOCKS.forEach(function(t){OU[t[0]]={n:t[0],step:stepFor(t[1]),lot:t[2],wk:false,vm:1.6}});
-function upx(u){return S.ix[u]?upx(u):S.px[u]}function ucl(u){return S.ix[u]?ucl(u):S.cl[u]}
+function upx(u){return S.ix[u]?S.ix[u].p:S.px[u]}function ucl(u){return S.ix[u]?S.ix[u].c:S.cl[u]}
 var MN=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"],MC="123456789OND";
 var oc={u:"NIFTY 50",e:null,ex:[],open:false,asc:true};
 function isOpt(s){return !!(S.oc&&S.oc[s])}
@@ -1159,12 +1159,12 @@ function z2(n){return n<10?"0"+n:""+n}
 function dstr(y,m,d){return y+"-"+z2(m+1)+"-"+z2(d)}
 function expMs(e){var a=e.split("-");return Date.UTC(+a[0],+a[1]-1,+a[2],10,0,0)}
 function adjTD(y,m,d){var t=Date.UTC(y,m,d,6,0,0),n=0;while(!tradeDay(t)&&n<10){t-=86400000;n++}var x=new Date(t);return[x.getUTCFullYear(),x.getUTCMonth(),x.getUTCDate()]}
-function lastTue(y,m){var x=new Date(Date.UTC(y,m+1,0));while(x.getUTCDay()!=2)x.setUTCDate(x.getUTCDate()-1);return x.getUTCDate()}
+function lastTue(y,m,w){w=w||2;var x=new Date(Date.UTC(y,m+1,0));while(x.getUTCDay()!=w)x.setUTCDate(x.getUTCDate()-1);return x.getUTCDate()}
 function expiries(u){var c=OU[u],now=Date.now(),d=new Date(now+19800000),y0=d.getUTCFullYear(),m0=d.getUTCMonth(),cand=[],seen={},out=[],i;
-if(c.wk){var x=new Date(Date.UTC(y0,m0,d.getUTCDate())),n=0,k=0;while(k<5&&n<60){if(x.getUTCDay()==2){cand.push([x.getUTCFullYear(),x.getUTCMonth(),x.getUTCDate()]);k++}x.setUTCDate(x.getUTCDate()+1);n++}}
-for(i=0;i<4;i++){var mm=m0+i,yy=y0+Math.floor(mm/12);mm%=12;cand.push([yy,mm,lastTue(yy,mm)])}
+if(c.wk){var x=new Date(Date.UTC(y0,m0,d.getUTCDate())),n=0,k=0;while(k<5&&n<60){if(x.getUTCDay()==(c.wd||2)){cand.push([x.getUTCFullYear(),x.getUTCMonth(),x.getUTCDate()]);k++}x.setUTCDate(x.getUTCDate()+1);n++}}
+for(i=0;i<4;i++){var mm=m0+i,yy=y0+Math.floor(mm/12);mm%=12;cand.push([yy,mm,lastTue(yy,mm,c.wd)])}
 cand.forEach(function(a){var r=adjTD(a[0],a[1],a[2]),k=dstr(r[0],r[1],r[2]);if(seen[k]||expMs(k)<=now)return;seen[k]=1;
-var lt=adjTD(r[0],r[1],lastTue(r[0],r[1])),mo=(lt[1]==r[1]&&lt[2]==r[2]);out.push({e:k,w:(c.wk&&!mo)?1:0})});
+var lt=adjTD(r[0],r[1],lastTue(r[0],r[1],c.wd)),mo=(lt[1]==r[1]&&lt[2]==r[2]);out.push({e:k,w:(c.wk&&!mo)?1:0})});
 out.sort(function(a,b){return expMs(a.e)-expMs(b.e)});return out.slice(0,7)}
 function osym(u,e,w,k,t){var c=OU[u],a=e.split("-"),m=+a[1]-1;return c.n+a[0].slice(2)+(w?MC[m]+a[2]:MN[m])+k+t}
 function optReg(u,e,w,k,t){var s=osym(u,e,w,k,t);S.oc=S.oc||{};if(!S.oc[s])S.oc[s]={u:u,k:k,t:t,e:e,w:w,lot:OU[u].lot,n:OU[u].n};optRefresh(s);return s}
@@ -1198,7 +1198,7 @@ function dlab(e){var d=daysTo(e);return d<=0?"Today":d<14?d+" Days":d<70?Math.ro
 function openChain(u){oc.u=OU[u]?u:oc.u;oc.ex=expiries(oc.u);if(!oc.ex.length)return toast("Koi expiry nahi mili");if(!oc.ex.some(function(x){return x.e==oc.e}))oc.e=oc.ex[0].e;oc.open=true;document.getElementById("ocp").classList.add("show");drawChain(true)}
 function closeChain(){oc.open=false;document.getElementById("ocp").classList.remove("show")}
 function ocSetE(e){oc.e=e;drawChain(true)}
-function ocSwap(){oc.u=oc.u=="NIFTY 50"?"NIFTY BANK":"NIFTY 50";oc.ex=expiries(oc.u);oc.e=oc.ex[0].e;drawChain(true)}
+function ocSwap(){var L=["NIFTY 50","NIFTY BANK","SENSEX"];oc.u=L[(L.indexOf(oc.u)+1)%3];oc.ex=expiries(oc.u);oc.e=oc.ex[0].e;drawChain(true)}
 function ocTap(k,t){var x=oc.ex.filter(function(a){return a.e==oc.e})[0];openQs(optReg(oc.u,oc.e,x.w,k,t))}
 function ocVals(u,e,K,sp){var cp=optPrice(u,e,K,"CE"),pp=optPrice(u,e,K,"PE"),c0=optPrev(u,e,K,"CE"),p0=optPrev(u,e,K,"PE");return{cp:cp,pp:pp,cc:c0>0?(cp-c0)/c0*100:0,pc:p0>0?(pp-p0)/p0*100:0,iv:(ivFor(u,sp,K)*100).toFixed(2)}}
 function ocFoot(u,e,sp,atm,c){var st=optPrice(u,e,atm,"CE")+optPrice(u,e,atm,"PE");return'<div><span>ATM IV</span><b>'+(ivFor(u,sp,atm)*100).toFixed(2)+'</b></div><div><span>Straddle</span><b>'+f2(st)+'</b></div><div><span>Lot size</span><b>'+c.lot+'</b></div><div><span>Expiry in</span><b>'+dlab(e)+'</b></div>'}
