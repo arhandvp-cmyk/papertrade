@@ -13,7 +13,7 @@ window.PT_DEV=id;
 var css=document.createElement("style");
 css.textContent='html.ptl body>*:not(#ptlock){display:none!important}#ptlock{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:#eceef0;font-family:Inter,system-ui,sans-serif;color:#3f3f54;padding:20px}html.ptl #ptlock{display:flex}#ptlock .c{background:#fff;border-radius:16px;padding:28px 24px;width:100%;max-width:340px;text-align:center;box-shadow:0 2px 14px rgba(0,0,0,.08)}#ptlock .i{font-size:38px;margin-bottom:6px}#ptlock h2{margin:0 0 8px;font-size:21px;font-weight:600}#ptlock p{margin:0 0 16px;color:#8c8ca0;font-size:14.5px;line-height:1.45}#ptlock .k{font:600 22px/1 monospace;letter-spacing:2px;background:#f4f4f7;border-radius:8px;padding:12px;margin:0 0 16px;color:#3f3f54}#ptlock button{width:100%;border:0;border-radius:8px;padding:13px;font:600 15px Inter,system-ui,sans-serif;background:#4184f3;color:#fff}#ptlock input{width:100%;box-sizing:border-box;padding:12px;font:15px Inter,system-ui,sans-serif;border:1px solid #ddd;border-radius:8px;margin:0 0 12px}#ptlock a{display:block;margin-top:14px;font-size:12.5px;color:#8c8ca0;text-decoration:underline}@media(prefers-color-scheme:dark){#ptlock{background:#121218;color:#e6e6ee}#ptlock .c{background:#1c1c24}#ptlock .k{background:#262630;color:#e6e6ee}#ptlock input{background:#262630;color:#e6e6ee;border-color:#3a3a46}}';
 document.head.appendChild(css);
-document.documentElement.classList.add("ptl");
+var okAt0=+LS.getItem(KO)||0;if(base()&&Date.now()-okAt0<GRACE)st="approved";else document.documentElement.classList.add("ptl");
 var el;function mount(){if(el||!document.body)return;el=document.createElement("div");el.id="ptlock";document.body.appendChild(el);ui()}
 document.addEventListener("DOMContentLoaded",mount);
 function ui(){if(!el)return;var h,p,x="",k='<div class="k">'+code+'</div>';
@@ -26,10 +26,10 @@ else if(st=="offline"){h="Connect nahi ho paya";p="Net ya server check karo.";x=
 el.innerHTML='<div class="c"><div class="i">\uD83D\uDD12</div><h2>'+h+'</h2><p>'+p+'</p>'+x+(base()?'<a href="#" onclick="PT_SETURL(1);return false">Server URL badlo</a>':"")+'</div>'}
 function lock(s){st=s;document.documentElement.classList.add("ptl");mount();ui()}
 function unlock(){st="approved";LS.setItem(KO,Date.now());document.documentElement.classList.remove("ptl")}
-function chk(){if(!base()){lock("url");return Promise.resolve()}if(busy)return Promise.resolve();busy=true;
-return fetch(base()+"/auth/check",{headers:{"X-Device":id},cache:"no-store"}).then(function(r){return r.json()}).then(function(j){
+function chk(){if(!base()){lock("url");return Promise.resolve()}if(busy)return Promise.resolve();busy=true;var ac=window.AbortController?new AbortController():null,tm=ac?setTimeout(function(){ac.abort()},8000):0;
+return fetch(base()+"/auth/check",{headers:{"X-Device":id},cache:"no-store",signal:ac?ac.signal:undefined}).then(function(r){return r.json()}).then(function(j){
 if(j.status=="approved")unlock();else lock(j.status=="pending"||j.status=="revoked"?j.status:"none")
-}).catch(function(){var okAt=+LS.getItem(KO)||0;if(st=="approved"||Date.now()-okAt<GRACE){if(st!="approved")unlock()}else lock("offline")}).then(function(){busy=false})}
+}).catch(function(){var okAt=+LS.getItem(KO)||0;if(st=="approved"||Date.now()-okAt<GRACE){if(st!="approved")unlock()}else lock("offline")}).then(function(){clearTimeout(tm);busy=false})}
 window.PT_CHK=function(){st=st=="approved"?st:"check";ui();chk()};
 window.PT_REQ=function(){fetch(base()+"/auth/request",{method:"POST",headers:{"X-Device":id}}).then(function(r){return r.json()}).then(function(j){lock(j.status||"pending");if(j.error)alert(j.error)}).catch(function(){lock("offline")})};
 window.PT_SETURL=function(change){if(change){LS.removeItem(KU);lock("url");return}var v=(document.getElementById("ptu").value||"").trim();if(!/^https:\/\//i.test(v)){alert("URL https:// se shuru hona chahiye");return}LS.setItem(KU,v.replace(/\/+$/,""));lock("check");chk()};
