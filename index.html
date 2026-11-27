@@ -947,7 +947,15 @@ var vx=j["^INDIAVIX"];if(vx&&vx.p>0)S.vix=vx.p;
 if(!n)throw new Error("koi price nahi aaya");
 liveErr="";liveOk=Date.now();if(!S.live.seeded){reseed();S.live.seeded=true}
 optAll();save();renderIx();renderList();if(ord)refreshOrd();drawDet();drawQs();if(oc.open)drawChain();if(cp)cpTick()}).catch(function(e){liveErr=(e&&e.name=="AbortError")?"timeout (8s)":String(e&&e.message||e)}).then(function(){clearTimeout(tm);liveBusy=false})}
-document.addEventListener("visibilitychange",function(){if(!document.hidden&&liveOn())liveFetch(true)});
+var fastBusy=false,fastGap=1000,fastT=0;
+function liveFast(){if(!liveOn()||fastBusy||document.hidden||!isOpen())return;var now=Date.now();if(now-fastT<fastGap)return;fastT=now;fastBusy=true;
+var ys=IXN.map(ysym).concat("^INDIAVIX"),ac=window.AbortController?new AbortController():null,tm=ac?setTimeout(function(){ac.abort()},4000):0;
+fetch(S.live.url+"?s="+encodeURIComponent(ys.join(","))+"&f=1&_="+now,{cache:"no-store",signal:ac?ac.signal:undefined}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(j){var n=0;
+IXN.forEach(function(y){var q=j[ysym(y)];if(!q||!(q.p>0))return;n++;var p=Math.round(q.p*100)/100;S.ix[y].p=p;if(S.cd[y])cand(y,p)});
+var vx=j["^INDIAVIX"];if(vx&&vx.p>0)S.vix=vx.p;if(!n)throw new Error("no price");
+fastGap=1000;liveErr="";liveOk=Date.now();optAll();renderIx();renderList();if(ord)refreshOrd();drawDet();drawQs();if(oc.open)drawChain();if(cp)cpTick()}).catch(function(){fastGap=Math.min(fastGap*2,8000)}).then(function(){clearTimeout(tm);fastBusy=false})}
+setInterval(liveFast,500);
+document.addEventListener("visibilitychange",function(){if(!document.hidden&&liveOn()){fastGap=1000;fastT=0;liveFetch(true)}});
 window.addEventListener("online",function(){if(liveOn())liveFetch(true)});
 window.addEventListener("focus",function(){if(liveOn())liveFetch(true)});
 function setLive(){var u=prompt("Live prices ke liye apna Worker URL daalo (band karne ke liye khaali chhodo).\nJaise: https://papertrade.naam.workers.dev",(S.live&&S.live.url)||"");
